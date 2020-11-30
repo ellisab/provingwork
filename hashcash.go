@@ -85,7 +85,7 @@ func (hc HashCash) CounterBytes() []byte {
 
 func (hc *HashCash) FindProof() {
 	hc.Counter = hc.Start
-	for i := hc.Start; i < hc.Stop; i++ {
+	for hc.Counter < hc.Stop {
 		if hc.Check() {
 			return
 		}
