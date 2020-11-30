@@ -57,7 +57,7 @@ func (wo HashCash) UnmarshalJSON(data []byte) error {
 }
 
 func NewHashCash(resource []byte, opts ...*WorkOptions) *HashCash {
-	hc := HashCash{ Resource: resource }
+	hc := HashCash{Resource: resource}
 
 	if len(opts) != 0 {
 		hc.WorkOptions = opts[0]
@@ -84,7 +84,8 @@ func (hc HashCash) CounterBytes() []byte {
 }
 
 func (hc *HashCash) FindProof() {
-	for {
+	hc.Counter = hc.Start
+	for i := hc.Start; i < hc.Stop; i++ {
 		if hc.Check() {
 			return
 		}

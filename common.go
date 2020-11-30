@@ -15,6 +15,8 @@ type WorkOptions struct {
 	Extension   []byte     `json:"extension,omitempty"`
 	Salt        []byte     `json:"salt,omitempty"`
 	Timestamp   *time.Time `json:"timestamp"`
+	Start       int64
+	Stop        int64
 }
 
 func setDefaultWorkOptions(wo *WorkOptions) {
