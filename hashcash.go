@@ -2,6 +2,7 @@ package provingwork
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	"math/big"
@@ -83,23 +84,27 @@ func (hc HashCash) CounterBytes() []byte {
 	return buf.Bytes()
 }
 
-func (hc *HashCash) FindProof() {
+func (hc *HashCash) FindProof(ctx context.Context, result chan string) {
 	hc.Counter = hc.Start
-	for hc.Counter < hc.Stop {
-		if hc.Check() {
+	for {
+		select {
+		case <-ctx.Done():
 			return
+		default:
+			if hc.Check() {
+				result <- base64.StdEncoding.EncodeToString(hc.Salt) + base64.StdEncoding.EncodeToString(hc.CounterBytes())
+			}
+			if hc.Counter < hc.Stop {
+				hc.Counter++
+			}
 		}
-		hc.Counter++
 	}
 }
 
 func (hc HashCash) String() string {
 	return fmt.Sprintf(
-		"1:%v:%v:%v:%v:%v:%v",
-		hc.BitStrength,
-		hc.Timestamp.Format("20060102150405"),
+		"%v%v%v",
 		string(hc.Resource),
-		string(hc.Extension),
 		base64.StdEncoding.EncodeToString(hc.Salt),
 		base64.StdEncoding.EncodeToString(hc.CounterBytes()),
 	)
